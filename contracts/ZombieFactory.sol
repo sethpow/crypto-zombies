@@ -1,4 +1,6 @@
-pragma solidity >=0.5.0 <0.6.0;
+"SPDX-License-Identifier: UNLICENSED"
+pragma solidity ^0.8.0;
+// pragma solidity >=0.5.0 <0.6.0;
 
 contract ZombieFactory {
     // declare our event here
@@ -20,7 +22,7 @@ contract ZombieFactory {
         // keeps track of how many zombies an owner has
     mapping(address => uint) ownerZombieCount;
 
-    function _createZombie(string memory _name, uint _dna) private {
+    function _createZombie(string memory _name, uint _dna) internal {
         // returns a uint of the new length of array; use for the id
         uint id = zombies.push(Zombie(_name, _dna)) - 1;
 
@@ -40,6 +42,8 @@ contract ZombieFactory {
     }
 
     function createRandomZombie(string memory _name) public {
+        // make sure this function only gets executed one time per user, when they create their first zombie
+        require(ownerZombieCount[msg.sender] == 0);
         uint randDna = _generateRandomDna(_name);
         _createZombie(_name, randDna);
     }
