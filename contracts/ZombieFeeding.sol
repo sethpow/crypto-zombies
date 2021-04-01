@@ -22,16 +22,39 @@ contract KittyInterface {
 
 contract ZombieFeeding is ZombieFactory {
 
-    address ckAddress = 0x06012c8cf97BEaD5deAe237070F9587f8E7A266d;
+    // address ckAddress = 0x06012c8cf97BEaD5deAe237070F9587f8E7A266d;
+
     // Initialize kittyContract here using `ckAddress` from above
-    KittyInterface kittyContract = KittyInterface(ckAddress);
+    // KittyInterface kittyContract = KittyInterface(ckAddress);
+    KittyInterface kittyContract;
+
+    // in case cryptoKitties becomes obsolite
+    function setKittyContractAddress(address _address) external onlyOwner {
+        kittyContract = KittyInterface(_address);
+    }
+
+    // 1. Define `_triggerCooldown` function here
+    // Feeding triggers a zombies cooldown; pass storage pointer to Zombie struct
+    function _triggerCooldown(Zombie storage _zombie) internal {
+        _zombie.readyTime = uint32(now + cooldownTime);
+    }
+
+    // 2. Define `_isReady` function here
+    // Zombies cant feed on kitties until their CD period has passed
+    function _isReady(Zombie storage _zombie) internal view returns(bool) {
+        return (_zombie.readyTime <= now);
+    }
 
     /*  make sure we own this zombie. Add a require statement to verify that msg.sender is equal to this
         zombie's owner (similar to how we did in the createRandomZombie function) */
-    function feedAndMultiply(uint _zombieId, uint _targetDna, string memory _species) public {
+    function feedAndMultiply(uint _zombieId, uint _targetDna, string memory _species) internal {
         require(msg.sender == zombieToOwner[_zombieId]);
         // declare a local Zombie named myZombie (which will be a storage pointer). Set this variable to be equal to index _zombieId in our zombies array
         Zombie storage myZombie = zombies[_zombieId];
+
+        // check if zombies CD time is over
+        require(_isReady(myZombie));
+
         // ensure _targetDna isnt longer than 16 digits
         _targetDna = _targetDna % dnaModulus;
         // newDna average of myZombie and target; dna for the infected target
@@ -44,6 +67,9 @@ contract ZombieFeeding is ZombieFactory {
         }
         // create the new zombie
         _createZombie("NoName", newDna);
+
+        // feeding triggers the zombies CD time
+        _triggerCooldown(myZombie);
     }
 
     // get kitty genes from contract
