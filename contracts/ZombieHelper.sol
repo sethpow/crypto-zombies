@@ -1,24 +1,37 @@
-pragma solidity >=0.5.0 <0.6.0;
+pragma solidity ^0.8.0;
 
-import "./zombiefeeding.sol";
+import "./ZombieFeeding.sol";
 
 // adding helper methods; zombies can gain special abilities after reaching certain levels
 contract ZombieHelper is ZombieFeeding {
+    uint levelUpFee = 0.001 ether;
 
     modifier aboveLevel(uint _level, uint _zombieId){
         require(zombies[_zombieId].level >= _level);
         _;
     }
 
-    // Start here
+    function withdraw() external onlyOwner {
+        address payable _owner = address(uint160(owner()));
+        _owner.transfer(address(this).balance);
+    }
+
+    // owner of contract can change the fee amount to level up
+    function setLevelUpFee(uint _fee) external onlyOwner {
+        levelUpFee = _fee;
+    }
+
+    function levelUp(uint _zombieId) external payable {
+        require(msg.value == levelUpFee);
+        zombies[_zombieId].level++;
+    }
+
     // calldata is similar to memory, but only available to external functions
-    function changeName(uint _zombieId, string calldata _newName) external aboveLevel(2, _zombieId) {
-        require(msg.sender == zombieToOwner[_zombieId]);
+    function changeName(uint _zombieId, string calldata _newName) external aboveLevel(2, _zombieId) ownerOf(_zombieId) {
         zombies[_zombieId].name = _newName;
     }
 
-    function changeDna(uint _zombieId, uint _newDna) external aboveLevel(20, _zombieId) {
-        require(msg.sender == zombieToOwner[_zombieId]);
+    function changeDna(uint _zombieId, uint _newDna) external aboveLevel(20, _zombieId) ownerOf(_zombieId) {
         zombies[_zombieId].dna = _newDna;
     }
 

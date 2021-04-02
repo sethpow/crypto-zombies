@@ -17,6 +17,8 @@ contract ZombieFactory is Ownable {
         uint dna;
         uint32 level;
         uint32 readyTime;
+        uint16 winCount;
+        uint16 lossCount;
     }
 
     Zombie[] public zombies;
@@ -29,7 +31,7 @@ contract ZombieFactory is Ownable {
 
     function _createZombie(string memory _name, uint _dna) internal {
         // returns a uint of the new length of array; use for the id; also checks for one day later
-        uint id = zombies.push(Zombie(_name, _dna, 1, uint32(now + cooldownTime))) - 1;
+        uint id = zombies.push(Zombie(_name, _dna, 1, uint32(now + cooldownTime), 0, 0)) - 1;
 
         // after we get back the new zombie's id, let's update our zombieToOwner mapping to store msg.sender under that id
         zombieToOwner[id] = msg.sender;
