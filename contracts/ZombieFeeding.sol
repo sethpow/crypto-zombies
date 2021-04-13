@@ -28,7 +28,7 @@ contract ZombieFeeding is ZombieFactory {
     // KittyInterface kittyContract = KittyInterface(ckAddress);
     KittyInterface kittyContract;
 
-    modifier ownerOf(uint _zombieId){
+    modifier onlyOwnerOf(uint _zombieId){
         require(msg.sender == zombieToOwner[_zombieId]);
         _;
     }
@@ -52,7 +52,7 @@ contract ZombieFeeding is ZombieFactory {
 
     /*  make sure we own this zombie. Add a require statement to verify that msg.sender is equal to this
         zombie's owner (similar to how we did in the createRandomZombie function) */
-    function feedAndMultiply(uint _zombieId, uint _targetDna, string memory _species) internal ownerOf(_zombieId) {
+    function feedAndMultiply(uint _zombieId, uint _targetDna, string memory _species) internal onlyOwnerOf(_zombieId) {
         // declare a local Zombie named myZombie (which will be a storage pointer). Set this variable to be equal to index _zombieId in our zombies array
         Zombie storage myZombie = zombies[_zombieId];
 
