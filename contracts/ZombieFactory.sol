@@ -3,8 +3,13 @@ pragma solidity ^0.8.0;
 // pragma solidity >=0.5.0 <0.6.0;
 
 import "./Ownable.sol";
+import "./safemath.sol";
 
 contract ZombieFactory is Ownable {
+    using SafeMath for uint256;
+    using SafeMath32 for uint32;
+    using SafeMath16 for uint16;
+
     // declare our event here
     event NewZombie(uint zombieId, string name, uint dna);
 
@@ -35,8 +40,10 @@ contract ZombieFactory is Ownable {
 
         // after we get back the new zombie's id, let's update our zombieToOwner mapping to store msg.sender under that id
         zombieToOwner[id] = msg.sender;
+        
         // increase ownerZombieCount for this msg.sender
-        ownerZombieCount[msg.sender]++;
+        // ownerZombieCount[msg.sender]++;
+        ownerZombieCount[msg.sender] = ownerZombieCount[msg.sender].add(1);
 
         // and fire it here
         emit NewZombie(id, _name, _dna);
