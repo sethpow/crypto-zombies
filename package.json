@@ -1,0 +1,23 @@
+{
+  "name": "crypto-zombies",
+  "version": "1.0.0",
+  "description": "- https://cryptozombies.io/     - Using the Ethereum blockchain and Solidity.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sethpow/crypto-zombies.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/sethpow/crypto-zombies/issues"
+  },
+  "homepage": "https://github.com/sethpow/crypto-zombies#readme",
+  "dependencies": {
+    "web3": "^1.3.5"
+  }
+}
